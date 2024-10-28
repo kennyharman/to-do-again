@@ -87,3 +87,20 @@ button:hover {
   outline: 2px solid #C9C19F;
   outline-offset: -1.5rem;
 }
+
+.filter-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 1.9rem;
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
+
+.filter-buttons > button {
+  background-color: #595140;
+  width: 7rem;
+  height: 1.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

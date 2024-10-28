@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-
+import React, { useState } from 'react';
 
 function TaskForm({ tasks, setTasks }) {
-  const [taskData, settaskData] = useState({ taskName: '', completed: false });
+  const [taskData, setTaskData] = useState({ taskName: '', completed: false });
+  const [filter, setFilter] = useState("All"); 
 
   function handleAddTask(e) {
     e.preventDefault();
     if (taskData.taskName) {
       const newTask = { ...taskData, id: tasks.length + 1, completed: false };
       setTasks([...tasks, newTask]);
-      settaskData({ taskName: '', completed: false });
+      setTaskData({ taskName: '', completed: false });
     }
   }
 
@@ -18,18 +18,26 @@ function TaskForm({ tasks, setTasks }) {
   }
 
   function toggleTaskCompletion(id) {
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, completed: !task.completed } : task
+    setTasks(tasks.map(task =>
+      task.id === id && !task.completed
+        ? { ...task, completed: true }
+        : task
     ));
   }
 
-  const newListUI = tasks.map((task) => (
-    <div key={task.id} style={{ display: 'flex', justifyContent: 'center', justifyContent: "space-between", gap: 2, marginTop: "2rem"}}>
+  const filteredTasks = tasks.filter(task => {
+    if (filter === "Completed") return task.completed;
+    if (filter === "Pending") return !task.completed;
+    return true; 
+  });
+
+  const newListUI = filteredTasks.map((task) => (
+    <div key={task.id} style={{ display: 'flex', justifyContent: "space-between", margin: '1em' }}>
       <input
         type="checkbox"
         checked={task.completed}
         onChange={() => toggleTaskCompletion(task.id)}
-        style={{ accentColor: '#6295B5'}}
+        disabled={task.completed} 
       />
       <p style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
         {task.taskName}
@@ -40,24 +48,27 @@ function TaskForm({ tasks, setTasks }) {
 
   return (
     <>
-    <div className="whole-thing">
-      <div>
-        <form onSubmit={handleAddTask} className="add-task">
-          <input
-            className='add-task-input'
-            type='text'
-            value={taskData.taskName}
-            onChange={(e) => settaskData({ ...taskData, taskName: e.target.value })}
-          />
-          <button className='btn-task' type="submit">Add Task</button>
-        </form>
-        </div>
-        <div className="list">
-          {newListUI}
-        </div>
+      <form onSubmit={handleAddTask} className='taskForm'>
+        <input
+          type='text'
+          value={taskData.taskName}
+          onChange={(e) => setTaskData({ ...taskData, taskName: e.target.value })}
+          placeholder="Add a new task"
+        />
+        <button className='btn-task' type="submit">Add Task</button>
+      </form>
+
+      <div className='filter-buttons'>
+        <button onClick={() => setFilter("All")}>All</button>
+        <button onClick={() => setFilter("Completed")}>Completed</button>
+        <button onClick={() => setFilter("Pending")}>Pending</button>
+      </div>
+
+      <div className='taskList'>
+        {newListUI}
       </div>
     </>
-  )
+  );
 }
 
 export default TaskForm;
